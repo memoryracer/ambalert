@@ -1,6 +1,7 @@
 import sys
 from threading import Thread
 from time import sleep
+from datetime import datetime
 import zmq
  
 from g_python.gextension import Extension
@@ -69,7 +70,7 @@ def on_chat(message):
 
 def process_remove_user(user):
     global roomIsSafe
-    print(f"User removed {user}")
+    print(f"[{datetime.now()}] ({user.entity_type.name}) <{user.name}> hat den Raum verlassen.")
     if (user.name in ambassadors):
         ambCount = 0
         for userId in roomUsers.room_users:
@@ -109,14 +110,14 @@ def process_new_users(users):
             #ext.send_to_server(HPacket("UpdateFigureData", "M", "hr-891-40.hd-209-1370.sh-290-64.ha-1002-73.lg-285-82.ch-210-73"))
             roomIsSafe = False
         else:
-            print(f"{user.name} hat den Raum betreten.")
+            print(f"[{datetime.now()}] ({user.entity_type.name}) <{user.name}> hat den Raum betreten.")
 
 
 def process_chat(packet):
     global roomIsSafe
     (userid, msg) = packet.read("is")
     msg = msg.encode('iso-8859-1').decode('utf-8')
-    print(f"{roomUsers.room_users[userid]}: {msg}")
+    print(f"[{datetime.now()}] ({roomUsers.room_users[userid].entity_type.name}) <{roomUsers.room_users[userid].name}>: {msg}")
     if "luft rein" in msg.lower():
         socket = zmq_connect()
         if roomIsSafe:
