@@ -15,7 +15,7 @@ def zmq_alert_request(socket, message="Das ist ein Test"):
 
 
 
-socket = zmq_connect(port=5556)
+socket = zmq_connect(port=5555)
 
 def get_input():
     while True:

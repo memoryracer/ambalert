@@ -24,6 +24,8 @@ ambassadors = [
     "cundero",
     "T0WLY",
     "NedurkTschger",
+    "Alduin",
+    "Juchuhi"
     "Rosi999",
     "Cybercheck",
     "g00dbye",
@@ -50,6 +52,16 @@ def on_new_users(users):
         newUsersThread = Thread(target=process_new_users, args=(users,))
         newUsersThread.daemon = True
         newUsersThread.start()
+    except KeyboardInterrupt:
+        print("Ctrl+C pressed...")
+        sys.exit(1)
+
+
+def on_chat(message):
+    try:
+        chatProcessingThread = Thread(target=process_chat, args=(message.packet,))
+        chatProcessingThread.daemon = True
+        chatProcessingThread.start()
     except KeyboardInterrupt:
         print("Ctrl+C pressed...")
         sys.exit(1)
@@ -100,6 +112,19 @@ def process_new_users(users):
             print(f"{user.name} hat den Raum betreten.")
 
 
+def process_chat(packet):
+    global roomIsSafe
+    (userid, msg) = packet.read("is")
+    msg = msg.encode('iso-8859-1').decode('utf-8')
+    print(f"{roomUsers.room_users[userid]}: {msg}")
+    if "luft rein" in msg:
+        socket = zmq_connect()
+        if roomIsSafe:
+            print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='Ja, die Luft ist rein!').decode('utf-8')}")
+        else:
+            print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='Nein, es befinden sich noch Spielverderber im Raum!').decode('utf-8')}")
+
+
 def show_sign():
     global roomIsSafe
     while True:
@@ -134,7 +159,7 @@ roomUsers = htools.RoomUsers(ext)
 roomUsers.on_new_users(on_new_users)
 roomUsers.on_remove_user(on_remove_user)
 
-
+ext.intercept(Direction.TO_CLIENT, on_chat, "Chat")
 
 try:
     signThread = Thread(target=show_sign)
