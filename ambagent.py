@@ -117,7 +117,7 @@ def process_chat(packet):
     (userid, msg) = packet.read("is")
     msg = msg.encode('iso-8859-1').decode('utf-8')
     print(f"{roomUsers.room_users[userid]}: {msg}")
-    if "luft rein" in msg:
+    if "luft rein" in msg.lower():
         socket = zmq_connect()
         if roomIsSafe:
             print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='Ja, die Luft ist rein!').decode('utf-8')}")
