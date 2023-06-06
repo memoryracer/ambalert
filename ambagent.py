@@ -126,7 +126,10 @@ def process_chat(packet):
             print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='Ja, die Luft ist rein!').decode('utf-8')}")
         else:
             print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='Nein, es befinden sich noch Spielverderber im Raum!').decode('utf-8')}")
-    elif "wer hat das gras weggeraucht" in msg.lower():
+    elif "wer hat das gras weg" in msg.lower():
+        socket = zmq_connect()
+        print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='DerNeger!').decode('utf-8')}")
+    elif "wer rammt dir den" in msg.lower():
         socket = zmq_connect()
         print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='DerNeger!').decode('utf-8')}")
 
