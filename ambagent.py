@@ -109,8 +109,10 @@ def process_new_users(users):
             #ext.send_to_server(HPacket("ChangeMotto", ""))
             #ext.send_to_server(HPacket("UpdateFigureData", "M", "hr-891-40.hd-209-1370.sh-290-64.ha-1002-73.lg-285-82.ch-210-73"))
             roomIsSafe = False
-        else:
-            print(f"[{datetime.now()}] ({user.entity_type.name}) <{user.name}> hat den Raum betreten.")
+        elif user.name == "daydr3amer":
+            socket = zmq_connect()
+            print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='ACHTUNG: daydr3amer hat den Raum betreten! Ab jetzt bitte nur noch politisch korrekt schreiben!').decode('utf-8')}")
+        print(f"[{datetime.now()}] ({user.entity_type.name}) <{user.name}> hat den Raum betreten.")
 
 
 def process_chat(packet):
@@ -124,6 +126,9 @@ def process_chat(packet):
             print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='Ja, die Luft ist rein!').decode('utf-8')}")
         else:
             print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='Nein, es befinden sich noch Spielverderber im Raum!').decode('utf-8')}")
+    elif "wer hat das gras weggeraucht" in msg.lower():
+        socket = zmq_connect()
+        print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='DerNeger!').decode('utf-8')}")
 
 
 def show_sign():
@@ -161,6 +166,7 @@ roomUsers.on_new_users(on_new_users)
 roomUsers.on_remove_user(on_remove_user)
 
 ext.intercept(Direction.TO_CLIENT, on_chat, "Chat")
+ext.intercept(Direction.TO_CLIENT, on_chat, "Shout")
 
 try:
     signThread = Thread(target=show_sign)
