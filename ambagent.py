@@ -3,7 +3,8 @@ from threading import Thread
 from time import sleep
 from datetime import datetime
 import zmq
- 
+import requests 
+
 from g_python.gextension import Extension
 from g_python.hmessage import Direction, HMessage
 from g_python.hpacket import HPacket
@@ -111,7 +112,13 @@ def process_new_users(users):
             roomIsSafe = False
         elif user.name == "daydr3amer":
             socket = zmq_connect()
-            print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='ACHTUNG: daydr3amer hat den Raum betreten! Ab jetzt bitte nur noch politisch korrekt schreiben!').decode('utf-8')}")
+            print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='ACHTUNG: daydr3amer hat den Raum betreten! Ab jetzt bitte keine Rechtschreibfehler mehr!').decode('utf-8')}")
+        elif user.name == "susase":
+            socket = zmq_connect()
+            print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='ACHTUNG: susase hat den Raum betreten! Ab jetzt bitte keine frauenfeindlichen Witze mehr!').decode('utf-8')}")
+        elif user.name == "habwohlbannups":
+            socket = zmq_connect()
+            print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='ACHTUNG: habwohlbannups hat den Raum betreten! Versteckt eure Speedreste!').decode('utf-8')}")
         print(f"[{datetime.now()}] ({user.entity_type.name}) <{user.name}> hat den Raum betreten.")
 
 
@@ -132,6 +139,12 @@ def process_chat(packet):
     elif "wer rammt dir den" in msg.lower():
         socket = zmq_connect()
         print(f"ALERT REQUEST {zmq_alert_request(socket=socket, message='DerNeger!').decode('utf-8')}")
+    elif "wetter in" in msg.lower():
+        city = msg.split(" ")[-1].replace("?", "").capitalize()
+        response = requests.get(f"https://wttr.in/{city}?format=%l:+%C+%t", headers={'Accept-Language': 'de'})
+        socket = zmq_connect()
+        print(f"WEATHER REQUEST FOR {city} {zmq_alert_request(socket=socket, message=str(response.text)).decode('utf-8')}")
+
 
 
 def show_sign():
